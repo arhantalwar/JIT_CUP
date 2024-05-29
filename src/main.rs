@@ -12,6 +12,11 @@ fn compile(path: &Path) {
 
                 let file_path = file.unwrap().path();
 
+                let mut path_index = file_path.to_str().unwrap().split("/").collect::<Vec<&str>>();
+                path_index.pop().unwrap();
+
+                let cur_dir = path_index.join("/");
+
                 if file_path.to_str().unwrap().contains("INFO") {
 
                     let info_cxt = fs::read_to_string(file_path).unwrap();
@@ -21,6 +26,7 @@ fn compile(path: &Path) {
 
                         "RUST" => {
                             Command::new("rustc").
+                                current_dir(cur_dir).
                                 arg("main.rs").
                                 spawn().
                                 unwrap();
@@ -28,6 +34,7 @@ fn compile(path: &Path) {
                         
                         "C" => {
                             Command::new("gcc").
+                                current_dir(cur_dir).
                                 args(["main.c", "-o", "main"]).
                                 spawn().
                                 unwrap();
@@ -35,6 +42,7 @@ fn compile(path: &Path) {
 
                         "PYTHON" => {
                             Command::new("python").
+                                current_dir(cur_dir).
                                 arg("main.py").
                                 spawn().
                                 unwrap();
@@ -42,6 +50,7 @@ fn compile(path: &Path) {
 
                         "JS" => {
                             Command::new("node").
+                                current_dir(cur_dir).
                                 arg("app.js").
                                 spawn().
                                 unwrap();
