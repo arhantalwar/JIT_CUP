@@ -12,7 +12,7 @@ If both of them cooperate and give their empty cups, they both receive +2 coins.
 ![thumbnail](./states/YY.png)
 
 ### Cheat
-If one of them cheats (i.e., does not give the empty cup) while the other cooperates (i.e., gives the empty cup), the one who cooperates gains +3 coins, and the one who cheats loses 1 coin.
+If one of them cheats (i.e., does not give the empty cup) while the other cooperates (i.e., gives the empty cup), the one who cheats gains +3 coins, and the one who cooperates loses 1 coin.
 
 ![thumbnail](./states/NY.png)
 ![thumbnail](./states/YN.png)
