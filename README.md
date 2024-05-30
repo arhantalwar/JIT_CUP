@@ -1,6 +1,6 @@
 # JIT CUP
 
-![thumbnail](./thumbnail.png)
+JIT or Just In Time is fun, adventurous coding competition where we tend to compete our programs against each other.
 
 ## Somewhere in Bellwood 
 
@@ -32,27 +32,34 @@ To participate you must follow the flow.
 
 1) Make a git repo
 2) Have the following folder structure
+3) Submit the repo URL to participate
 
 ### Folder Structure
 
 ```
-|──[folder1]/
-|  |──helper.c
 |──INFO (MANDATORY)
 |──main.c (Naming it main is MANDATORY)
+|──folder1/ (Example, You can have helper things)
+|  |──helper.c
 ```
 
 INFO must contain two things,
 
-YOUR NAME
+YOUR NAME<br>
 LANGUAGE YOU USED
 
 ## WHAT SHOULD THE CODE LOOK LIKE
 
-There will be 200 rounds played between 2 bots. A single round will be consisted of you getting 2 arguments from the terminal.
-These arguments will be the count of current round and the info of what the opponent player had said in the previous round.
-In case of the very first round when no one has played any round before the second argument will then say "NONE".
+There will be 200 rounds played between 2 bots. A single round will be consisted of you getting 2 arguments from the terminal.<br>
+These arguments are the count of the current round and the info of what the opponent player had said in the previous round.<br>
+In case of the very first round when no one has played any round before the second argument will then say "NONE".<br>
 
 ```console
 $ ./main CURRENT_ROUND_NUM OPPONENT_PLAYER_PREVIOUS_ROUND_INPUT
 ```
+
+### Example: 
+Now you can get as creative you want, Store the info of what the other player had said in a file and read it after maybe 10 rounds
+check weather if the opponent has said 4 No's.
+
+![thumbnail](./states/Example.png)
