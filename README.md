@@ -2,11 +2,12 @@
 
 JIT or Just In Time is fun, adventurous coding competition where we tend to compete our programs against each other.
 
-## Somewhere in Bellwood 
+## Somewhere in Bellwood
 
 Ben and Albedo are enjoying their Mr. Smoothy drinks. Once they finish, they are given a choice: they can either give their empty cups to the machine next to them and receive some coins in return, or they can keep the cups. There's a catch: they won't be able to communicate with each other the whole time. The outcome for each depends not only on their own decisions but also on the decisions made by the other.
 
 ### Cooperate
+
 If both of them cooperate and give their empty cups, they both receive +2 coins.
 
 ![thumbnail](./states/YY.png)
@@ -15,6 +16,7 @@ If both of them choose not to give the empty cup, neither of them gains any coin
 ![thumbnail](./states/NN.png)
 
 ### Cheat
+
 If one of them cheats (i.e., does not give the empty cup) while the other cooperates (i.e., gives the empty cup), the one who cheats gains +3 coins, and the one who cooperates loses 1 coin.
 
 ![thumbnail](./states/NY.png)
@@ -30,14 +32,15 @@ You can write this program in the following languages: C, RUST, PYTHON, JS
 
 To participate you must follow the flow.
 
-1) Make a git repo
-2) Have the following folder structure
-3) Submit the repo URL to participate
+1. Make a git repo
+2. Have the following folder structure
+3. Submit the repo URL to participate
 
 ### Folder Structure
 
 ```
 |──INFO (MANDATORY)
+|──README.md (optional)
 |──main.c (Naming it main is MANDATORY)
 |──folder1/ (Example, You can have helper things)
 |  |──helper.c
@@ -58,8 +61,11 @@ In case of the very first round when no one has played any round before the seco
 $ ./main CURRENT_ROUND_NUM OPPONENT_PLAYER_PREVIOUS_ROUND_INPUT
 ```
 
-### Example: 
+### Example:
+
 Now you can get as creative you want, Store the info of what the other player had said in a file and read it after maybe 10 rounds
 check weather if the opponent has said 4 No's.
 
 ![thumbnail](./states/Example.png)
+
+Here's an example of a repository you can submit: https://github.com/amodmanjarekar/JIT-demo
