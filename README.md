@@ -61,6 +61,11 @@ In case of the very first round when no one has played any round before the seco
 $ ./main CURRENT_ROUND_NUM OPPONENT_PLAYER_PREVIOUS_ROUND_INPUT
 ```
 
+### Tournament Type
+
+This Tournament will be of a round robin type. Each players bot will compete again all other players bots.
+In the end one who's bot scores more points shall cease the day.
+
 ### Example:
 
 Now you can get as creative you want, Store the info of what the other player had said in a file and read it after maybe 10 rounds
