@@ -40,6 +40,13 @@ fn compile(path: &Path) {
                                 unwrap();
                         }
 
+                        "CPP" => {
+                            Command::new("g++").
+                                current_dir(cur_dir).
+                                args(["main.cpp", "-o", "main"]).
+                                spawn().
+                                unwrap();
+                        }
                         "PYTHON" => {
                             Command::new("python").
                                 current_dir(cur_dir).
@@ -52,6 +59,13 @@ fn compile(path: &Path) {
                             Command::new("node").
                                 current_dir(cur_dir).
                                 arg("app.js").
+                                spawn().
+                                unwrap();
+                        }
+                        "JAVA" => {
+                            Command::new("java").
+                                current_dir(cur_dir).
+                                arg("main.java").
                                 spawn().
                                 unwrap();
                         }
@@ -82,4 +96,4 @@ fn main() {
 }
 
 
-/* [C, Rust, JS, Python] */
+/* [C, CPP, Rust, JS, Java Python] */
