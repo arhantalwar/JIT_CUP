@@ -64,7 +64,7 @@ $ ./main CURRENT_ROUND_NUM OPPONENT_PLAYER_PREVIOUS_ROUND_INPUT
 ### Tournament Type
 
 This Tournament will be of a round robin type. Each players bot will compete again all other players bots.
-In the end one who's bot scores more points shall cease the day.
+In the end of the tournament total points scored by each bot will be calculated. one who's bot has scored more points will win.
 
 ### Example:
 
