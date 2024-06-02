@@ -84,13 +84,175 @@ fn git_clone(path: &Path) {
 
     }
 
+}
+
+fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
+    
+    let mut temp_path = path.to_str().unwrap().to_string();
+
+    match info.as_str() {
+
+        "RUST" | "C" | "CPP" | "C++" => {
+        
+            let _ = temp_path.push_str("/main");
+        
+            let mut cmd_out = Command::new(temp_path)
+                                 .args([round.to_string(), prev.to_string()])
+                                 .output().unwrap().stdout;
+        
+            if *cmd_out.last().unwrap() == 10 as u8 {
+                cmd_out.pop();
+            }
+        
+            let out = String::from_utf8(cmd_out).unwrap();
+        
+            return out;
+        
+        }
+
+        "PYTHON" => {
+
+            let mut cmd_out = Command::new("python")
+                                 .current_dir(path)
+                                 .args(["main.py".to_string(), round.to_string(), prev.to_string()])
+                                 .output().unwrap().stdout;
+
+            if *cmd_out.last().unwrap() == 10 as u8 {
+                cmd_out.pop();
+            }
+
+            let out = String::from_utf8(cmd_out).unwrap();
+
+            return out;
+
+        }
+
+        "JS" => {
+
+            let mut cmd_out = Command::new("node")
+                                 .current_dir(path)
+                                 .args(["main.js".to_string(), round.to_string(), prev.to_string()])
+                                 .output().unwrap().stdout;
+
+            if *cmd_out.last().unwrap() == 10 as u8 {
+                cmd_out.pop();
+            }
+
+            let out = String::from_utf8(cmd_out).unwrap();
+
+            return out;
+
+        }
+
+        "JAVA" => {
+
+            let mut cmd_out = Command::new("java")
+                                 .current_dir(path)
+                                 .args(["main.java".to_string(), round.to_string(), prev.to_string()])
+                                 .output().unwrap().stdout;
+
+            if *cmd_out.last().unwrap() == 10 as u8 {
+                cmd_out.pop();
+            }
+
+            let out = String::from_utf8(cmd_out).unwrap();
+
+            return out;
+
+        }
+
+        "ELIXIR" => {
+
+            let mut cmd_out = Command::new("elixir")
+                                 .current_dir(path)
+                                 .args(["main.exs".to_string(), round.to_string(), prev.to_string()])
+                                 .output().unwrap().stdout;
+
+            if *cmd_out.last().unwrap() == 10 as u8 {
+                cmd_out.pop();
+            }
+
+            let out = String::from_utf8(cmd_out).unwrap();
+
+            return out;
+
+        }
+
+        _ => {  }
+    }
+
+    "NONE".to_string()
+
+}
+
+fn compete(path: &Path) {
+
+    let mut a_out: String;
+    let mut b_out: String;
+
+    let mut a_out_prev: String;
+    let mut b_out_prev: String;
+
+    for (index_a, entry_a) in fs::read_dir(path).unwrap().enumerate() {
+
+        let path_a = entry_a.unwrap().path();
+
+        let mut info_a_path = path_a.as_path().to_str().unwrap().to_string();
+        info_a_path.push_str("/INFO");
+
+        let mut info_a_read = fs::read_to_string(&info_a_path).unwrap();
+
+        info_a_read.pop();
+
+        let info_a = info_a_read.split("\n").last().unwrap().to_string();
+        let info_name_a_vec = info_a_read.split("\n").collect::<Vec<_>>();
+        let info_name_a = info_name_a_vec.get(0).unwrap();
+
+        for (index_b, entry_b) in fs::read_dir(path).unwrap().enumerate() {
+
+            if index_a != index_b {
+
+                let path_b = entry_b.unwrap().path();
+
+                let mut info_b_path = path_b.as_path().to_str().unwrap().to_string();
+                info_b_path.push_str("/INFO");
+
+                let mut info_b_read = fs::read_to_string(&info_b_path).unwrap();
+                info_b_read.pop();
+                let info_b = info_b_read.split("\n").last().unwrap().to_string();
+
+                let info_name_b_vec = info_b_read.split("\n").collect::<Vec<_>>();
+                let info_name_b = info_name_b_vec.get(0).unwrap();
+
+                for round in 1..=5 {
+
+                    a_out = get_output(&path_a, &info_a.to_uppercase(), round, &"YES".to_string());
+                    b_out = get_output(&path_b, &info_b.to_uppercase(), round, &"YES".to_string());
+
+                    println!("ROUND BETWEEN {:?} {:?} AND OUTPUT {:?} {:?} ROUND NO {:?}",
+                             info_name_a, 
+                             info_name_b,
+                             a_out,
+                             b_out,
+                             round);
+
+                }
+
+            }
+
+        }
+
+        println!("\n");
+
+    }
 
 }
 
 fn main() {
 
-    git_clone(Path::new("/home/arhant/JIT_CUP/playground/"));
-    compile(Path::new("/home/arhant/JIT_CUP/playground/"));
+    // git_clone(Path::new("/home/arhant/JIT_CUP/playground/"));
+    // compile(Path::new("/home/arhant/JIT_CUP/playground/"));
+    compete(Path::new("/home/arhant/JIT_CUP/playground/"));
 
 
 }
