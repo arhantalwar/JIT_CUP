@@ -1,4 +1,5 @@
 use std::fs;
+use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
@@ -100,7 +101,7 @@ fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
                                  .args([round.to_string(), prev.to_string()])
                                  .output().unwrap().stdout;
         
-            if *cmd_out.last().unwrap() == 10 as u8 {
+            if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
                 cmd_out.pop();
             }
         
@@ -117,7 +118,7 @@ fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
                                  .args(["main.py".to_string(), round.to_string(), prev.to_string()])
                                  .output().unwrap().stdout;
 
-            if *cmd_out.last().unwrap() == 10 as u8 {
+            if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
                 cmd_out.pop();
             }
 
@@ -134,7 +135,7 @@ fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
                                  .args(["main.js".to_string(), round.to_string(), prev.to_string()])
                                  .output().unwrap().stdout;
 
-            if *cmd_out.last().unwrap() == 10 as u8 {
+            if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
                 cmd_out.pop();
             }
 
@@ -151,7 +152,7 @@ fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
                                  .args(["main.java".to_string(), round.to_string(), prev.to_string()])
                                  .output().unwrap().stdout;
 
-            if *cmd_out.last().unwrap() == 10 as u8 {
+            if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
                 cmd_out.pop();
             }
 
@@ -168,7 +169,7 @@ fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
                                  .args(["main.exs".to_string(), round.to_string(), prev.to_string()])
                                  .output().unwrap().stdout;
 
-            if *cmd_out.last().unwrap() == 10 as u8 {
+            if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
                 cmd_out.pop();
             }
 
@@ -185,13 +186,48 @@ fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
 
 }
 
+fn update_score(path: &Path, state: &str) {
+    let score_path = path.join("score.txt");
+
+    let mut score: i32 = if score_path.exists() {
+        let score_content = fs::read_to_string(&score_path).unwrap();
+        score_content.trim().parse().unwrap_or(0)
+    } else {
+        0
+    };
+
+    match state {
+        "+3" => {
+            score += 3;
+        }
+
+        "+2" => {
+            score += 2;
+        }
+
+        "+0" => {
+            score += 0;
+        }
+
+        "-1" => {
+            score -= 1;
+        }
+
+        _ => {}
+    }
+
+    let mut file = fs::File::create(score_path).unwrap();
+    writeln!(file, "{}", score).unwrap();
+
+}
+
 fn compete(path: &Path) {
 
     let mut a_out: String;
     let mut b_out: String;
 
-    let mut a_out_prev: String;
-    let mut b_out_prev: String;
+    let mut a_out_prev: String = "NONE".to_string();
+    let mut b_out_prev: String = "NONE".to_string();
 
     for (index_a, entry_a) in fs::read_dir(path).unwrap().enumerate() {
 
@@ -224,17 +260,36 @@ fn compete(path: &Path) {
                 let info_name_b_vec = info_b_read.split("\n").collect::<Vec<_>>();
                 let info_name_b = info_name_b_vec.get(0).unwrap();
 
-                for round in 1..=5 {
+                for round in 1..=200 {
 
-                    a_out = get_output(&path_a, &info_a.to_uppercase(), round, &"YES".to_string());
-                    b_out = get_output(&path_b, &info_b.to_uppercase(), round, &"YES".to_string());
+                    a_out = get_output(&path_a, &info_a.to_uppercase(), round, &a_out_prev);
+                    b_out = get_output(&path_b, &info_b.to_uppercase(), round, &b_out_prev);
 
-                    println!("ROUND BETWEEN {:?} {:?} AND OUTPUT {:?} {:?} ROUND NO {:?}",
+                    println!("ROUND BETWEEN {:?} {:?} AND OUTPUTS {:?} {:?} ROUND NO {:?} PREV RES {:?} {:?}",
                              info_name_a, 
                              info_name_b,
                              a_out,
                              b_out,
-                             round);
+                             round,
+                             a_out_prev,
+                             b_out_prev);
+
+                    if a_out.to_uppercase() == "YES" && b_out.to_uppercase() == "YES" {
+                        update_score(&path_a, "+2");
+                        update_score(&path_b, "+2");
+                    } else if a_out.to_uppercase() == "NO" && b_out.to_uppercase() == "NO" {
+                        update_score(&path_a, "+0");
+                        update_score(&path_b, "+0");
+                    } else if a_out.to_uppercase() == "YES" && b_out.to_uppercase() == "NO" {
+                        update_score(&path_a, "-1");
+                        update_score(&path_b, "+3");
+                    } else if a_out.to_uppercase() == "NO" && b_out.to_uppercase() == "YES" {
+                        update_score(&path_a, "+3");
+                        update_score(&path_b, "-1");
+                    }
+
+                    a_out_prev = a_out.to_uppercase();
+                    b_out_prev = b_out.to_uppercase();
 
                 }
 
