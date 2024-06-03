@@ -186,7 +186,7 @@ fn get_output(path: &Path, info: &String, round: i32, prev: &String) -> String {
 
 }
 
-fn update_score(path: &Path, state: &str) {
+fn update_score(path: &Path, state: &str, info_name: &str) {
     let score_path = path.join("score.txt");
 
     let mut score: i32 = if score_path.exists() {
@@ -195,6 +195,8 @@ fn update_score(path: &Path, state: &str) {
     } else {
         0
     };
+
+    println!("POINTS BEFORE FOR {:?} {:?}", info_name, score);
 
     match state {
         "+3" => {
@@ -216,6 +218,8 @@ fn update_score(path: &Path, state: &str) {
         _ => {}
     }
 
+    println!("POINTS AFTER FOR {:?} {:?}", info_name, score);
+
     let mut file = fs::File::create(score_path).unwrap();
     writeln!(file, "{}", score).unwrap();
 
@@ -226,8 +230,6 @@ fn compete(path: &Path) {
     let mut a_out: String;
     let mut b_out: String;
 
-    let mut a_out_prev: String = "NONE".to_string();
-    let mut b_out_prev: String = "NONE".to_string();
 
     for (index_a, entry_a) in fs::read_dir(path).unwrap().enumerate() {
 
@@ -246,6 +248,9 @@ fn compete(path: &Path) {
 
         for (index_b, entry_b) in fs::read_dir(path).unwrap().enumerate() {
 
+            let mut a_out_prev: String = "NONE".to_string();
+            let mut b_out_prev: String = "NONE".to_string();
+
             if index_a != index_b {
 
                 let path_b = entry_b.unwrap().path();
@@ -262,8 +267,8 @@ fn compete(path: &Path) {
 
                 for round in 1..=200 {
 
-                    a_out = get_output(&path_a, &info_a.to_uppercase(), round, &a_out_prev);
-                    b_out = get_output(&path_b, &info_b.to_uppercase(), round, &b_out_prev);
+                    a_out = get_output(&path_a, &info_a.to_uppercase(), round, &b_out_prev);
+                    b_out = get_output(&path_b, &info_b.to_uppercase(), round, &a_out_prev);
 
                     println!("ROUND BETWEEN {:?} {:?} AND OUTPUTS {:?} {:?} ROUND NO {:?} PREV RES {:?} {:?}",
                              info_name_a, 
@@ -275,17 +280,17 @@ fn compete(path: &Path) {
                              b_out_prev);
 
                     if a_out.to_uppercase() == "YES" && b_out.to_uppercase() == "YES" {
-                        update_score(&path_a, "+2");
-                        update_score(&path_b, "+2");
+                        update_score(&path_a, "+2", info_name_a);
+                        update_score(&path_b, "+2", info_name_b);
                     } else if a_out.to_uppercase() == "NO" && b_out.to_uppercase() == "NO" {
-                        update_score(&path_a, "+0");
-                        update_score(&path_b, "+0");
+                        update_score(&path_a, "+0", info_name_a);
+                        update_score(&path_b, "+0", info_name_b);
                     } else if a_out.to_uppercase() == "YES" && b_out.to_uppercase() == "NO" {
-                        update_score(&path_a, "-1");
-                        update_score(&path_b, "+3");
+                        update_score(&path_a, "-1", info_name_a);
+                        update_score(&path_b, "+3", info_name_b);
                     } else if a_out.to_uppercase() == "NO" && b_out.to_uppercase() == "YES" {
-                        update_score(&path_a, "+3");
-                        update_score(&path_b, "-1");
+                        update_score(&path_a, "+3", info_name_a);
+                        update_score(&path_b, "-1", info_name_b);
                     }
 
                     a_out_prev = a_out.to_uppercase();
