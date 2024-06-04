@@ -1,5 +1,7 @@
 # JIT CUP
 
+![thumbnail](./assets/JIT_BANNER.png)
+
 <a href="https://discord.gg/UYk2UvPubh"><img src="https://img.shields.io/badge/JIT%20discord-grey?logo=discord"></a>  
 JIT or Just In Time is fun, adventurous coding competition where we tend to compete our programs against each other.
 
