@@ -3,7 +3,11 @@
 ![thumbnail](./assets/JIT_BANNER.png)
 
 <a href="https://discord.gg/UYk2UvPubh"><img src="https://img.shields.io/badge/JIT%20discord-grey?logo=discord"></a>  
-JIT or Just In Time is fun, adventurous coding competition where we tend to compete our programs against each other.
+<a href="https://jit-platform.vercel.app/"><img src="https://img.shields.io/website-up-down-green-red/http/shields.io.svg"></a>  
+
+
+JIT or Just In Time is a fun, adventurous coding competition where we tend to compete programs against each other.
+So, If you think you can win, take on a challenge.
 
 ## Somewhere in Bellwood
 
