@@ -1,5 +1,6 @@
 # JIT CUP
-<a href="https://discord.gg/UYk2UvPubh"> <img src="https://img.shields.io/badge/JIT%20discord-grey?logo=discord"></a>  
+
+<a href="https://discord.gg/UYk2UvPubh"><img src="https://img.shields.io/badge/JIT%20discord-grey?logo=discord"></a>  
 JIT or Just In Time is fun, adventurous coding competition where we tend to compete our programs against each other.
 
 ## Somewhere in Bellwood
@@ -10,17 +11,17 @@ Ben and Albedo are enjoying their Mr. Smoothy drinks. Once they finish, they are
 
 If both of them cooperate and give their empty cups, they both receive +2 coins.
 
-![thumbnail](./states/YY.png)
+![thumbnail](./assets/week_1/YY.png)
 
 If both of them choose not to give the empty cup, neither of them gains any coins.
-![thumbnail](./states/NN.png)
+![thumbnail](./assets/week_1/NN.png)
 
 ### Cheat
 
 If one of them cheats (i.e., does not give the empty cup) while the other cooperates (i.e., gives the empty cup), the one who cheats gains +3 coins, and the one who cooperates loses 1 coin.
 
-![thumbnail](./states/NY.png)
-![thumbnail](./states/YN.png)
+![thumbnail](./assets/week_1/NY.png)
+![thumbnail](./assets/week_1/YN.png)
 
 ## It's Hero Time
 
@@ -71,6 +72,6 @@ In the end of the tournament (i.e after each bot plays 200 rounds with all other
 Now you can get as creative you want, Store the info of what the other player had said in a file and read it after maybe 10 rounds
 check weather if the opponent has said 4 No's.
 
-![thumbnail](./states/Example.png)
+![thumbnail](./assets/week_1/Example.png)
 
 Here's an example of a repository you can submit: https://github.com/amodmanjarekar/JIT-demo
