@@ -35,7 +35,7 @@ either horizontally or vertically, but not diagonally.
 This is a turn-based game. Each turn, you'll need to guess a cell where the opponent's ship might be hiding.
 The player who guesses all opponent ship cells in the fewest guesses wins.
 
-![thumbnail](./assets/week_2/locate Boat.png)
+![thumbnail](./assets/week_2/locate_boat.png)
 
 ## Where's Perry?
 
