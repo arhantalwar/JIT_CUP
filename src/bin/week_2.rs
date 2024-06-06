@@ -1,3 +1,6 @@
+use std::fs;
+use std::path::Path;
+
 fn read_grid_to_vec(path: &Path) -> Vec<i32> {
 
     let grid_string = fs::read_to_string(path).unwrap();

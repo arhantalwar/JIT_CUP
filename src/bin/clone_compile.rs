@@ -87,4 +87,6 @@ fn git_clone(path: &Path) {
 }
 
 fn main() {
+    git_clone(Path::new("/home/arhant/JIT_CUP/playground/"));
+    compile(Path::new("/home/arhant/JIT_CUP/playground/"));
 }
