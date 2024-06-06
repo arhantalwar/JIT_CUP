@@ -9,31 +9,38 @@
 JIT or Just In Time is a fun, adventurous coding competition where we tend to compete programs against each other.
 So, If you think you can win, take on a challenge.
 
-## Somewhere in Bellwood
+## Somewhere in Danville
 
-Ben and Albedo are enjoying their Mr. Smoothy drinks. Once they finish, they are given a choice: they can either give their empty cups to the machine next to them and receive some coins in return, or they can keep the cups. There's a catch: they won't be able to communicate with each other the whole time. The outcome for each depends not only on their own decisions but also on the decisions made by the other.
+Dr. Doofenshmirtz has had enough of the unbearable heat and decided to freeze all the ocean's water. The reason remains unknown, but fortunately, Agent P has arrived at the scene to prevent this catastrophe.
 
-### Cooperate
+Doofenshmirtz has deployed 5 underwater ships that will freeze the ocean water. Your mission, Agent P, is to locate all these ships before it's too late. Additionally, to unfreeze the ocean, you'll need to deploy 5 of your own ships in such a way that the evil Dr. Doofenshmirtz won't find them.
 
-If both of them cooperate and give their empty cups, they both receive +2 coins.
+Good luck, Agent P! The fate of the ocean rests in your hands.
 
-![thumbnail](./assets/week_1/YY.png)
+### Deploy Ships
 
-If both of them choose not to give the empty cup, neither of them gains any coins.
-![thumbnail](./assets/week_1/NN.png)
+To begin, deploy 5 of your own ships. These ships come in different sizes and can be placed 
+either horizontally or vertically, but not diagonally.
 
-### Cheat
+    - Carrier: 5 cells
+    - Battleship: 4 cells
+    - Cruiser: 3 cells
+    - Submarine: 3 cells
+    - Destroyer: 2 cells
 
-If one of them cheats (i.e., does not give the empty cup) while the other cooperates (i.e., gives the empty cup), the one who cheats gains +3 coins, and the one who cooperates loses 1 coin.
+![thumbnail](./assets/week_2/Boat.png)
 
-![thumbnail](./assets/week_1/NY.png)
-![thumbnail](./assets/week_1/YN.png)
+### Locate Ships
 
-## It's Hero Time
+This is a turn-based game. Each turn, you'll need to guess a cell where the opponent's ship might be hiding.
+The player who guesses all opponent ship cells in the fewest guesses wins.
 
-It is your time to step into the shoes of ben and make those decisions.
-Write a program that will print out either "YES" or "NO" to stdout.
-You can write this program in the following languages: C, RUST, PYTHON, JS
+![thumbnail](./assets/week_2/locate Boat.png)
+
+## Where's Perry?
+
+Perry will assist you in writing a program that prints a single coordinate during your turn,
+indicating where a ship might be located. You can write this program in C, Rust, C++, Java, Python, or JavaScript.
 
 ## GUIDELINES TO FOLLOW
 
@@ -46,38 +53,62 @@ To participate you must follow the flow.
 ### Folder Structure
 
 ```
-|──INFO (MANDATORY)
+|──INFO (MANDATORY, should be a file without any extension. i.e no .txt)
 |──README.md (optional)
 |──main.c (Naming it main is MANDATORY)
+|──GRID (MANDATORY, should be a file without any extension, Will contain your ships deploy info)
 |──folder1/ (Example, You can have helper things)
 |  |──helper.c
 ```
 
 INFO must contain two things,
 
-YOUR NAME<br>
-LANGUAGE YOU USED
+    - YOUR NAME<br>
+    - LANGUAGE YOU USED
+
+GRID must contain 100 lines. Since we will have a 10x10 grid<br>
+For example, Suppose you had a grid size 3x5. Then the GRID file will read as follow.
+
+``` console
+- * - * *
+- * - - -
+- * - - -
+```
+
+0
+1
+0
+1
+1
+0
+1
+0
+0
+... and so on.
+
+    - 1 signifies an occupied cell
+    - 0 signifies an empty cell
+
+You will have to design your grid file using the link that will be provided soon and have that in the repo.
 
 ## WHAT SHOULD THE CODE LOOK LIKE
 
-There will be 200 rounds played between 2 bots. A single round will be consisted of you getting 2 arguments from the terminal.<br>
-These arguments are the count of the current round and the info of what the opponent player had said in the previous round.<br>
-In case of the very first round when no one has played any round before the second argument will then say "NONE".<br>
+Just write code for a single-turn. You could store your position in a file and then read again in the next turn and make decision.
+Your code will take in 2 arguments from the commandline. These args are as follow: <br>
+    - ACKNOWLEDGEMENT
+    - CORRECT_CELLS_LEFT_COUNT
+
+Your code should print to stdout a specific coordinate in the format "X Y", where both X and Y range from 1 to 10.
+Both X and Y start from 1 and go till 10. So for example the output could be "1 5" or "9 3".
+<bold>If a bot repeats a co-ordinate twice, It will get disqualifed and the opponent will score 1 point</bold>
+
+ACKNOWLEDGEMENT will tell you about weather in the last round the specified co-ordinate by you were correct or not by saying
+either "HIT", "MISS" or in the case of very first round "NONE".
 
 ```console
-$ ./main CURRENT_ROUND_NUM OPPONENT_PLAYER_PREVIOUS_ROUND_INPUT
+$ ./main ACKNOWLEDGEMENT CORRECT_CELLS_LEFT_COUNT
 ```
 
 ### Tournament Type
 
-This Tournament will be of a round robin type. Each players bot will compete against all other players bots.
-In the end of the tournament (i.e after each bot plays 200 rounds with all other bots) total points scored by each bot will be calculated. one who's bot has scored more points will win.
-
-### Example:
-
-Now you can get as creative you want, Store the info of what the other player had said in a file and read it after maybe 10 rounds
-check weather if the opponent has said 4 No's.
-
-![thumbnail](./assets/week_1/Example.png)
-
-Here's an example of a repository you can submit: https://github.com/amodmanjarekar/JIT-demo
+This Tournament will be of a single round with each of the player bots. At the end one who has most points wins.
