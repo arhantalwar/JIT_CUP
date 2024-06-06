@@ -56,6 +56,7 @@ fn get_output(path: &Path, info: &String, prev: &String, correct_left: i32) -> S
             let _ = temp_path.push_str("/main");
 
             let mut cmd_out = Command::new(temp_path)
+                .current_dir(path)
                 .args([prev.to_string(), correct_left.to_string()])
                 .output().unwrap().stdout;
 
@@ -181,8 +182,8 @@ fn compete(path: &Path) {
                 let info_name_b_vec = info_b_read.split("\n").collect::<Vec<_>>();
                 let info_name_b = info_name_b_vec.get(0).unwrap();
 
-                let a_vec = read_grid_to_vec(&b_vec_path);
-                let b_vec = read_grid_to_vec(&a_vec_path);
+                let a_vec = read_grid_to_vec(&a_vec_path);
+                let b_vec = read_grid_to_vec(&b_vec_path);
 
                 while a_correct_guess != 0 || b_correct_guess != 0 {
 
