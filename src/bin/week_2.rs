@@ -23,7 +23,7 @@ fn grid_to_index_value(grid_value: &String) -> i32 {
 }
 
 fn update_score(path: &Path, info_name: &str) {
-    let score_path = path.join("score");
+    let score_path = path.join("SCORE");
 
     let mut score: i32 = if score_path.exists() {
         let score_content = fs::read_to_string(&score_path).unwrap();
@@ -32,11 +32,13 @@ fn update_score(path: &Path, info_name: &str) {
         0
     };
 
-    println!("POINTS BEFORE FOR {:?} {:?}", info_name, score);
+    // println!("POINTS BEFORE FOR {:?} {:?}", info_name, score);
 
     score += 1;
 
-    println!("POINTS AFTER FOR {:?} {:?}", info_name, score);
+    // println!("POINTS AFTER FOR {:?} {:?}", info_name, score);
+
+    println!("{:?} WON\n", info_name);
 
     let mut file = fs::File::create(score_path).unwrap();
     writeln!(file, "{}", score).unwrap();
@@ -165,7 +167,7 @@ fn compete(path: &Path) {
             if index_a != index_b {
 
                 let path_b = entry_b.unwrap().path();
-                
+
                 let mut info_b_path = path_b.as_path().to_str().unwrap().to_string();
                 info_b_path.push_str("/INFO");
 
@@ -179,8 +181,8 @@ fn compete(path: &Path) {
                 let info_name_b_vec = info_b_read.split("\n").collect::<Vec<_>>();
                 let info_name_b = info_name_b_vec.get(0).unwrap();
 
-                let a_vec = read_grid_to_vec(&a_vec_path);
-                let b_vec = read_grid_to_vec(&b_vec_path);
+                let a_vec = read_grid_to_vec(&b_vec_path);
+                let b_vec = read_grid_to_vec(&a_vec_path);
 
                 while a_correct_guess != 0 || b_correct_guess != 0 {
 
@@ -203,42 +205,66 @@ fn compete(path: &Path) {
                     }
 
                     if a_dis == true && b_dis == true {
+                        println!("A & B WERE DQ");
                         break;
                     } else if a_dis == true {
+                        println!("A WAS DQ");
                         update_score(&path_b, info_name_b);
                         break;
                     } else if b_dis == true {
+                        println!("B WAS DQ");
                         update_score(&path_a, info_name_a);
                         break;
                     }
 
-                    if *b_vec.get(a_index_value as usize).unwrap() == 1 as i32 {
+                    if *b_vec.get(a_index_value as usize).unwrap() == 1 {
                         a_correct_guess -= 1;
+                        if a_correct_guess <= 0 {
+                            break;
+                        }
                         a_out_prev = "HIT".to_string();
+                        println!("A GUESSED AT {:?}", a_out);
+                        println!("A GUESSED CORRECTLY AT {:?} LEFT {:?}\n", a_out, a_correct_guess);
                     } else {
+                        println!("A GUESSED AT {:?}", a_out);
+                        println!("A MISSED AT {:?}\n", a_out);
                         a_out_prev = "MISS".to_string();
                     }
 
-                    if *a_vec.get(b_index_value as usize).unwrap() == 1 as i32 {
+                    if *a_vec.get(b_index_value as usize).unwrap() == 1 {
                         b_correct_guess -= 1;
+                        if b_correct_guess <= 0 {
+                            break;
+                        }
                         b_out_prev = "HIT".to_string();
+                        println!("B GUESSED AT {:?}", b_out);
+                        println!("B GUESSED CORRECTLY AT {:?} LEFT {:?}\n", b_out, b_correct_guess);
                     } else {
+                        println!("B GUESSED AT {:?}", b_out);
+                        println!("B MISSED AT {:?}\n", b_out);
                         b_out_prev = "MISS".to_string();
                     }
 
                 }
 
-                if a_correct_guess == 0 {
+                if a_correct_guess == 0 || a_correct_guess < 0 {
                     update_score(&path_a, info_name_a);
-                } else if b_correct_guess == 0 {
+                } else if b_correct_guess == 0 || b_correct_guess < 0 {
                     update_score(&path_b, info_name_b);
                 }
+
+                a_correct_guess = 17;
+                b_correct_guess = 17;
+
+                a_guess_list.clear();
+                b_guess_list.clear();
+
+                a_dis = false;
+                b_dis = false;
 
             }
 
         }
-
-        println!("\n");
 
     }
 
