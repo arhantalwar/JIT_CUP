@@ -146,7 +146,6 @@ fn compete(path: &Path) {
     let mut a_out: String;
     let mut b_out: String;
 
-
     for (index_a, entry_a) in fs::read_dir(path).unwrap().enumerate() {
 
         let path_a = entry_a.unwrap().path();
