@@ -75,15 +75,15 @@ For example, Suppose you had a grid size 3x5. Then the GRID file will read as fo
 - * - - -
 ```
 
-0
-1
-0
-1
-1
-0
-1
-0
-0
+0<br>
+1<br>
+0<br>
+1<br>
+1<br>
+0<br>
+1<br>
+0<br>
+0<br>
 ... and so on.
 
     - 1 signifies an occupied cell
