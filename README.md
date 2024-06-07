@@ -77,21 +77,14 @@ If this is your layout
 ```
 Then this is your `GRID` file
 ```md
-0
-1
-0
-1
-1
-0
-1
-0
-0
-... and so on.
+2: [(1, 4), (1, 5)]
+3: [(1, 2), (2, 2), (3, 2)]
+... and so on for all the remaining ships. (we have 5 ships in total in our 10x10 grid)
 ```
-    - 1 signifies an occupied cell
-    - 0 signifies an empty cell
 
-You will have to design your grid file using the link that will be provided soon and have that in the repo.
+You will have to design your grid file using the link that will be provided soon or you can make it you're self.
+Make sure you have this GRID file in the repo.
+Also locating any ship diagonally will result in disqualification for that bot.
 
 ## WHAT SHOULD THE CODE LOOK LIKE
 
