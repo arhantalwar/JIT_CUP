@@ -63,29 +63,31 @@ To participate you must follow the flow.
 
 INFO must contain two things,
 
-    - YOUR NAME<br>
+    - YOUR NAME 
     - LANGUAGE YOU USED
 
 GRID must contain 100 lines. Since we will have a 10x10 grid<br>
-For example, Suppose you had a grid size 3x5. Then the GRID file will read as follow.
+For example, Suppose you had a grid size 3x5. Then the GRID file will read as follow.  
 
+If this is your layout
 ``` console
 - * - * *
 - * - - -
 - * - - -
 ```
-
-0<br>
-1<br>
-0<br>
-1<br>
-1<br>
-0<br>
-1<br>
-0<br>
-0<br>
+Then this is your `GRID` file
+```md
+0
+1
+0
+1
+1
+0
+1
+0
+0
 ... and so on.
-
+```
     - 1 signifies an occupied cell
     - 0 signifies an empty cell
 
@@ -112,3 +114,6 @@ $ ./main ACKNOWLEDGEMENT CORRECT_CELLS_LEFT_COUNT
 ### Tournament Type
 
 This Tournament will be of a single round with each of the player bots. At the end one who has most points wins.
+
+---  
+Join us over on the discord server https://discord.gg/rsgg59FR
