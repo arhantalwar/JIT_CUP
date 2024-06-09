@@ -91,17 +91,20 @@ Also locating any ship diagonally will result in disqualification for that bot.
 Just write code for a single-turn. You could store your position in a file and then read again in the next turn and make decision.
 Your code will take in 2 arguments from the commandline. These args are as follow: <br>
     - ACKNOWLEDGEMENT
-    - CORRECT_CELLS_LEFT_COUNT
+    - SHIP_INFO
 
 Your code should print to stdout a specific coordinate in the format "X Y", where both X and Y range from 1 to 10.
 Both X and Y start from 1 and go till 10. So for example the output could be "1 5" or "9 3".
 <bold>If a bot repeats a co-ordinate twice, It will get disqualifed and the opponent will score 1 point</bold>
 
-ACKNOWLEDGEMENT will tell you about weather in the last round the specified co-ordinate by you were correct or not by saying
+1st arguemnt, ACKNOWLEDGEMENT will tell you about weather in the last round the specified co-ordinate by you were correct or not by saying
 either "HIT", "MISS" or in the case of very first round "NONE".
 
+2nd argument, INFO will let you know which ship has sung.
+in case if you're had guessed all the cells of a ship with 3 cells you will get 3 in the arg. if the next ship that you completely destory was of 2 cells then the second argument will read 2 and so on until you destroy all the ships. the second arg will say NONE for all those rounds in which no ship has been destroyed.
+
 ```console
-$ ./main ACKNOWLEDGEMENT CORRECT_CELLS_LEFT_COUNT
+$ ./main ACKNOWLEDGEMENT SHIP_INFO
 ```
 
 ### Tournament Type
