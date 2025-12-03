@@ -1,26 +1,48 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::fs;
 use std::io::Write;
 use std::path::Path;
 use std::process::Command;
 
-fn read_grid_to_vec(path: &String) -> Vec<i32> {
+type Coordinate = (i32, i32);
 
+fn read_grid_to_hashmap(path: &str) -> HashMap<i32, HashSet<Coordinate>> {
+    let mut ship_data: HashMap<i32, HashSet<Coordinate>> = HashMap::new();
     let grid_string = fs::read_to_string(path).unwrap();
-    let grid = grid_string.split("\n").map(|x| x.parse::<i32>().unwrap_or_default()).collect::<Vec<_>>();
 
-    grid
+    for line in grid_string.lines() {
+        let parts: Vec<&str> = line.split(": ").collect();
+        if parts.len() == 2 {
+            let ship_type: i32 = parts[0].parse().expect("Invalid ship type");
+            let coords_str = &parts[1][1..parts[1].len() - 1]; // Remove the outer brackets
+            let coords: HashSet<Coordinate> = coords_str
+                .split("), (")
+                .map(|s| {
+                    let coord_parts: Vec<&str> = s.trim_matches(&['(', ')'][..]).split(", ").collect();
+                    (
+                        coord_parts[0].parse().expect("Invalid coordinate"),
+                        coord_parts[1].parse().expect("Invalid coordinate"),
+                    )
+                })
+                .collect();
+
+            ship_data.insert(ship_type, coords);
+        }
+    }
+
+    ship_data
 
 }
 
-fn grid_to_index_value(grid_value: &String) -> i32 {
-
-    let grid_vec = grid_value.split(" ").map(|x| x.parse::<i32>().unwrap()).collect::<Vec<i32>>();
-    let out: i32 = grid_vec.iter().enumerate().map(|(i, x)| if i == 0 { 10 * (x - 1) } else { *x }).sum();
-
-    out - 1
-
+fn find_and_remove_coordinate(ship_data: &mut HashMap<i32, HashSet<Coordinate>>, coord: Coordinate) -> Option<i32> {
+    for (&ship_type, coords) in ship_data.iter_mut() {
+        if coords.remove(&coord) {
+            return Some(ship_type);
+        }
+    }
+    None
 }
+
 
 fn update_score(path: &Path, info_name: &str) {
     let score_path = path.join("SCORE");
@@ -32,11 +54,7 @@ fn update_score(path: &Path, info_name: &str) {
         0
     };
 
-    // println!("POINTS BEFORE FOR {:?} {:?}", info_name, score);
-
     score += 1;
-
-    // println!("POINTS AFTER FOR {:?} {:?}", info_name, score);
 
     println!("{:?} WON\n", info_name);
 
@@ -45,7 +63,7 @@ fn update_score(path: &Path, info_name: &str) {
 
 }
 
-fn get_output(path: &Path, info: &String, prev: &String, correct_left: i32) -> String {
+fn get_output(path: &Path, info: &String, prev: &String, ship_destroyed: &String) -> String {
 
     let mut temp_path = path.to_str().unwrap().to_string();
 
@@ -57,7 +75,7 @@ fn get_output(path: &Path, info: &String, prev: &String, correct_left: i32) -> S
 
             let mut cmd_out = Command::new(temp_path)
                 .current_dir(path)
-                .args([prev.to_string(), correct_left.to_string()])
+                .args([prev.to_string(), ship_destroyed.to_string()])
                 .output().unwrap().stdout;
 
             if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
@@ -74,7 +92,7 @@ fn get_output(path: &Path, info: &String, prev: &String, correct_left: i32) -> S
 
             let mut cmd_out = Command::new("python")
                 .current_dir(path)
-                .args(["main.py".to_string(), prev.to_string(), correct_left.to_string()])
+                .args(["main.py".to_string(), prev.to_string(), ship_destroyed.to_string()])
                 .output().unwrap().stdout;
 
             if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
@@ -91,7 +109,7 @@ fn get_output(path: &Path, info: &String, prev: &String, correct_left: i32) -> S
 
             let mut cmd_out = Command::new("node")
                 .current_dir(path)
-                .args(["main.js".to_string(), prev.to_string(), correct_left.to_string()])
+                .args(["main.js".to_string(), prev.to_string(), ship_destroyed.to_string()])
                 .output().unwrap().stdout;
 
             if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
@@ -108,7 +126,7 @@ fn get_output(path: &Path, info: &String, prev: &String, correct_left: i32) -> S
 
             let mut cmd_out = Command::new("java")
                 .current_dir(path)
-                .args(["main.java".to_string(), prev.to_string(), correct_left.to_string()])
+                .args(["main.java".to_string(), prev.to_string(), ship_destroyed.to_string()])
                 .output().unwrap().stdout;
 
             if *cmd_out.last().unwrap_or(&10) == 10 as u8 {
@@ -133,8 +151,8 @@ fn compete(path: &Path) {
     let mut a_correct_guess = 17;
     let mut b_correct_guess = 17;
 
-    let mut a_guess_list: HashMap<i32, i32> = HashMap::new();
-    let mut b_guess_list: HashMap<i32, i32> = HashMap::new();
+    let mut a_guess_list: HashMap<Coordinate, i32> = HashMap::new();
+    let mut b_guess_list: HashMap<Coordinate, i32> = HashMap::new();
 
     let mut a_dis: bool = false;
     let mut b_dis: bool = false;
@@ -165,6 +183,9 @@ fn compete(path: &Path) {
             let mut a_out_prev: String = "NONE".to_string();
             let mut b_out_prev: String = "NONE".to_string();
 
+            let mut a_ship_dest: String = "NONE".to_string();
+            let mut b_ship_dest: String = "NONE".to_string();
+
             if index_a != index_b {
 
                 let path_b = entry_b.unwrap().path();
@@ -182,75 +203,124 @@ fn compete(path: &Path) {
                 let info_name_b_vec = info_b_read.split("\n").collect::<Vec<_>>();
                 let info_name_b = info_name_b_vec.get(0).unwrap();
 
-                let a_vec = read_grid_to_vec(&a_vec_path);
-                let b_vec = read_grid_to_vec(&b_vec_path);
+                let mut a_hash = read_grid_to_hashmap(&a_vec_path);
+                let mut b_hash = read_grid_to_hashmap(&b_vec_path);
 
                 while a_correct_guess != 0 || b_correct_guess != 0 {
 
-                    a_out = get_output(&path_a, &info_a.to_uppercase(), &a_out_prev, a_correct_guess);
-                    b_out = get_output(&path_b, &info_b.to_uppercase(), &b_out_prev, b_correct_guess);
+                    a_out = get_output(&path_a, &info_a.to_uppercase(), &a_out_prev, &a_ship_dest);
+                    b_out = get_output(&path_b, &info_b.to_uppercase(), &b_out_prev, &b_ship_dest);
 
-                    let a_index_value = grid_to_index_value(&a_out);
-                    let b_index_value = grid_to_index_value(&b_out);
+                    let a_out_vec = a_out.split(" ").collect::<Vec<&str>>();
+                    let b_out_vec = b_out.split(" ").collect::<Vec<&str>>();
 
-                    if a_guess_list.get(&a_index_value).is_none() {
-                        a_guess_list.insert(a_index_value, 1);
+                    if !a_guess_list.contains_key(&(a_out_vec[0].parse().unwrap(), a_out_vec[1].parse().unwrap())) {
+                        a_guess_list.insert((a_out_vec[0].parse().unwrap(), a_out_vec[1].parse().unwrap()), 1);
                     } else {
                         a_dis = true;
                     }
 
-                    if b_guess_list.get(&b_index_value).is_none() {
-                        b_guess_list.insert(b_index_value, 1);
+                    if !b_guess_list.contains_key(&(b_out_vec[0].parse().unwrap(), b_out_vec[1].parse().unwrap())) {
+                        b_guess_list.insert((b_out_vec[0].parse().unwrap(), b_out_vec[1].parse().unwrap()), 1);
                     } else {
                         b_dis = true;
                     }
 
                     if a_dis == true && b_dis == true {
-                        println!("A & B WERE DQ");
+                        println!("{:?} & {:?} WERE DQ FOR REPEATING CO-ORDINATES {:?} {:?}", info_name_a, info_name_b, a_out, b_out);
                         break;
                     } else if a_dis == true {
-                        println!("A WAS DQ");
+                        println!("{:?} WAS DQ FOR REPEATING CO-ORDINATES {:?}", info_name_a, a_out);
                         update_score(&path_b, info_name_b);
                         break;
                     } else if b_dis == true {
-                        println!("B WAS DQ");
+                        println!("{:?} WAS DQ FOR REPEATING CO-ORDINATES {:?}", info_name_b, b_out);
                         update_score(&path_a, info_name_a);
                         break;
                     }
 
-                    if *b_vec.get(a_index_value as usize).unwrap() == 1 {
-                        a_correct_guess -= 1;
-                        if a_correct_guess <= 0 {
-                            break;
-                        }
-                        a_out_prev = "HIT".to_string();
-                        println!("A GUESSED AT {:?}", a_out);
-                        println!("A GUESSED CORRECTLY AT {:?} LEFT {:?}\n", a_out, a_correct_guess);
-                    } else {
-                        println!("A GUESSED AT {:?}", a_out);
-                        println!("A MISSED AT {:?}\n", a_out);
-                        a_out_prev = "MISS".to_string();
-                    }
-
-                    if *a_vec.get(b_index_value as usize).unwrap() == 1 {
+                    if let Some(_) = find_and_remove_coordinate(&mut a_hash, 
+                                                               (b_out_vec[0].parse().unwrap(), 
+                                                                b_out_vec[1].parse().unwrap()))  {
                         b_correct_guess -= 1;
+
                         if b_correct_guess <= 0 {
                             break;
                         }
+
                         b_out_prev = "HIT".to_string();
-                        println!("B GUESSED AT {:?}", b_out);
-                        println!("B GUESSED CORRECTLY AT {:?} LEFT {:?}\n", b_out, b_correct_guess);
+
+                        println!("{:?} GUESSED CORRECTLY AT {:?} LEFT {:?}\n", info_name_b, b_out, b_correct_guess);
+
+                        let a_hash_filter_vec: Vec<i32> = a_hash.iter().filter_map(|(&key, set)| {
+                            if set.len() == 0 {
+                                Some(key)
+                            } else {
+                                None
+                            }
+                        }).collect();
+
+                        if let Some(t) = a_hash_filter_vec.get(0) {
+                            a_hash.remove(&t);
+                            a_ship_dest = t.to_string();
+                            println!("{:?} DESTROYED SHIP {:?}\n", info_name_b, t);
+                        } else {
+                            a_ship_dest = "NONE".to_string();
+                        }
+
                     } else {
-                        println!("B GUESSED AT {:?}", b_out);
-                        println!("B MISSED AT {:?}\n", b_out);
+
                         b_out_prev = "MISS".to_string();
+                        a_ship_dest = "NONE".to_string();
+
+                        println!("{:?} GUESSED AND MISSED AT {:?}", info_name_b, b_out);
+
+                    }
+
+                    if let Some(_) = find_and_remove_coordinate(&mut b_hash, 
+                                                               (a_out_vec[0].parse().unwrap()
+                                                               ,a_out_vec[1].parse().unwrap()))  {
+                        a_correct_guess -= 1;
+
+                        if a_correct_guess <= 0 {
+                            break;
+                        }
+
+                        a_out_prev = "HIT".to_string();
+
+                        println!("{:?} GUESSED AT {:?}", info_name_a, a_out);
+                        println!("{:?} GUESSED CORRECTLY AT {:?} LEFT {:?}\n", info_name_a, a_out, a_correct_guess);
+
+                        let b_hash_filter_vec: Vec<i32> = b_hash.iter().filter_map(|(&key, set)| {
+                            if set.len() == 0 {
+                                Some(key)
+                            } else {
+                                None
+                            }
+                        }).collect();
+
+                        if let Some(t) = b_hash_filter_vec.get(0) {
+                            b_hash.remove(&t);
+                            b_ship_dest = t.to_string();
+                            println!("{:?} DESTROYED SHIP {:?}\n", info_name_a, t);
+                        } else {
+                            b_ship_dest = "NONE".to_string();
+                        }
+                        
+                    } else {
+
+                        a_out_prev = "MISS".to_string();
+                        b_ship_dest = "NONE".to_string();
+
+                        println!("{:?} GUESSED AND MISSED AT {:?}", info_name_a, a_out);
+
                     }
 
                 }
 
-                if a_correct_guess == 0 || a_correct_guess < 0 {
+                if a_correct_guess <= 0 {
                     update_score(&path_a, info_name_a);
-                } else if b_correct_guess == 0 || b_correct_guess < 0 {
+                } else if b_correct_guess <= 0 {
                     update_score(&path_b, info_name_b);
                 }
 
